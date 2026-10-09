@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0b0b10">
+<title>Rednex — RDX</title>
+<style>
+:root {
+  --bg:#0b0b10;
+  --panel:#15151d;
+  --panel2:#1c1c26;
+  --red:#ff303b;
+  --red2:#b90f25;
+  --text:#f7f7fb;
+  --muted:#92929f;
+  --line:#292933;
+  --green:#55e6a5;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:Inter,system-ui,-apple-system,Arial,sans-serif;
+  padding-bottom:92px;
+}
+button{font:inherit;cursor:pointer}
+.app{max-width:520px;margin:auto;min-height:100vh;padding:18px 16px 24px}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{
+  width:43px;height:43px;border-radius:14px;
+  background:linear-gradient(145deg,#ff4650,#9c071d);
+  display:grid;place-items:center;font-size:23px;font-weight:1000;
+  box-shadow:0 5px 22px #ff303b30
+}
+.brand-name{font-size:19px;font-weight:900;letter-spacing:.4px}
+.brand-sub{font-size:10px;color:var(--muted);letter-spacing:2px;margin-top:2px}
+.profile{
+  width:42px;height:42px;border:1px solid var(--line);
+  border-radius:14px;background:var(--panel);display:grid;place-items:center;font-size:19px
+}
+.page{display:none}
+.page.active{display:block}
+.eyebrow{color:var(--red);font-size:11px;font-weight:800;letter-spacing:2px}
+h1{font-size:25px;line-height:1.2;margin:7px 0 6px}
+.subtitle{font-size:13px;color:var(--muted);line-height:1.6}
+.balance-card{
+  margin-top:20px;padding:21px;border-radius:24px;overflow:hidden;position:relative;
+  background:linear-gradient(135deg,#35121c 0%,#1c1119 48%,#15151d 100%);
+  border:1px solid #57212c;
+}
+.balance-card:after{
+  content:"R";position:absolute;right:5px;top:-42px;font-size:180px;
+  font-weight:1000;color:#ffffff06;pointer-events:none
+}
+.balance-label{font-size:12px;color:#c6aab0}
+.balance-number{font-size:35px;font-weight:900;letter-spacing:-1px;margin:7px 0}
+.coin-tag{font-size:12px;color:#ff8189}
+.balance-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:17px;gap:10px}
+.level-pill{background:#ffffff12;border:1px solid #ffffff12;border-radius:20px;padding:8px 11px;font-size:11px}
+.mini-stat{font-size:11px;color:#d7bfc3}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin:25px 0 13px}
+.section-head h2{font-size:16px;margin:0}
+.small-link{font-size:12px;color:var(--red);background:none;border:0}
+.mining-card{
+  padding:19px 16px;background:var(--panel);border:1px solid var(--line);
+  border-radius:23px;text-align:center
+}
+.coin-wrap{
+  width:154px;height:154px;margin:7px auto 15px;border-radius:50%;
+  display:grid;place-items:center;position:relative;
+  background:radial-gradient(circle,#44121c 0%,#251018 54%,#17151d 72%);
+  border:1px solid #752331;
+  box-shadow:0 0 0 9px #ff303b08,0 0 35px #ff303b12
+}
+.coin{
+  width:112px;height:112px;border-radius:50%;display:grid;place-items:center;
+  background:linear-gradient(145deg,#ff6269,#ed182c 55%,#8e0719);
+  border:5px solid #ff9a9e;color:white;font-size:39px;font-weight:1000;
+  box-shadow:inset 0 3px 9px #ffffff45,0 9px 25px #ff303b30
+}
+.mining-status{font-size:13px;font-weight:700}
+.status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:6px}
+.mining-sub{font-size:12px;color:var(--muted);margin-top:7px}
+.progress-row{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin:20px 0 8px}
+.progress{height:7px;background:#292932;border-radius:20px;overflow:hidden}
+.progress-fill{height:100%;width:0;background:linear-gradient(90deg,#a30c21,#ff4650);border-radius:20px}
+.primary{
+  border:0;border-radius:14px;background:linear-gradient(110deg,#ff414b,#d9142b);
+  color:white;font-weight:900;padding:14px 16px;width:100%;
+  box-shadow:0 7px 18px #ff303b20
+}
+.primary:disabled{opacity:.45;box-shadow:none;cursor:not-allowed}
+.secondary{
+  background:#22212a;border:1px solid #34333e;border-radius:13px;
+  color:white;padding:12px 14px;font-weight:700
+}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.stat-card{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:15px}
+.stat-icon{font-size:19px;margin-bottom:12px}
+.stat-label{font-size:11px;color:var(--muted)}
+.stat-value{font-size:19px;font-weight:850;margin-top:6px}
+.stat-note{font-size:10px;color:var(--green);margin-top:5px}
+.info-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px;margin-top:13px}
+.row{display:flex;align-items:center;gap:12px}
+.row-between{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.item-icon{width:44px;height:44px;flex-shrink:0;border-radius:14px;background:#2b151d;display:grid;place-items:center;font-size:21px}
+.item-title{font-size:13px;font-weight:800}
+.item-desc{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.5}
+.item-reward{font-size:12px;color:#ff777f;font-weight:800;white-space:nowrap}
+.task-button{margin-top:13px}
+.task-button .secondary,.task-button .primary{padding:10px 13px;font-size:12px}
+.friend-link{background:#0e0e14;border:1px dashed #6b303a;border-radius:12px;padding:13px;font-size:12px;color:#ff9ba1;overflow-wrap:anywhere;margin:15px 0}
+.wallet-total{font-size:30px;font-weight:900;margin:10px 0 5px}
+.history-item{padding:13px 0;border-bottom:1px solid var(--line)}
+.history-item:last-child{border:0}
+.history-plus{color:var(--green);font-size:13px;font-weight:800}
+.empty{padding:28px 10px;text-align:center;color:var(--muted);font-size:12px}
+.bottom-nav{
+  position:fixed;z-index:20;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:520px;display:grid;grid-template-columns:repeat(5,1fr);
+  padding:10px 5px calc(10px + env(safe-area-inset-bottom));
+  background:#111117f5;backdrop-filter:blur(18px);
+  border-top:1px solid var(--line)
+}
+.nav-btn{border:0;background:none;color:#777783;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:10px;padding:5px 0}
+.nav-icon{font-size:20px;line-height:1.1}
+.nav-btn.active{color:#ff4b55;font-weight:800}
+.notice{font-size:11px;color:var(--muted);line-height:1.6;margin-top:17px}
+.badge{font-size:10px;padding:5px 8px;border-radius:8px;background:#302027;color:#ff8990}
+@media(min-width:520px){.app{padding-top:25px}.bottom-nav{border-radius:18px 18px 0 0}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">R</div>
+      <div>
+        <div class="brand-name">REDNEX <span style="color:#ff4650">.</span></div>
+        <div class="brand-sub">RDX COMMUNITY</div>
+      </div>
+    </div>
+    <button class="profile" onclick="showPage('wallet')" aria-label="Profile">♙</button>
+  </header>
+
+  <main>
+    <section class="page active" id="home">
+      <div class="eyebrow">YOUR MINING ZONE</div>
+      <h1>Build your RDX.</h1>
+      <div class="subtitle">Keep progressing. Collect points. Level up.</div>
+
+      <div class="balance-card">
+        <div class="balance-label">TOTAL RDX POINTS</div>
+        <div class="balance-number" id="balance">0.00</div>
+        <div class="coin-tag">◆ RDX POINTS · DEMO</div>
+        <div class="balance-bottom">
+          <span class="level-pill">⚡ Rookie Miner</span>
+          <span class="mini-stat">Mining session: <b id="sessionTime">00:00</b></span>
+        </div>
+      </div>
+
+      <div class="section-head"><h2>Mining Station</h2><span class="badge">BETA</span></div>
+      <div class="mining-card">
+        <div class="coin-wrap"><div class="coin">R</div></div>
+        <div class="mining-status"><span class="status-dot"></span>Mining station ready</div>
+        <div class="mining-sub">Start a demo session to see the interface in action.</div>
+        <div class="progress-row"><span>Session progress</span><span id="progressText">0%</span></div>
+        <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+        <button class="primary" id="mineBtn" style="margin-top:20px" onclick="toggleMining()">⚡ Start Mining</button>
+      </div>
+
+      <div class="section-head"><h2>Your Overview</h2></div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">⚡</div><div class="stat-label">Mining Speed</div>
+          <div class="stat-value">1 <span style="font-size:12px">RDX/min</span></div>
+          <div class="stat-note">Demo rate only</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🎯</div><div class="stat-label">Tasks Completed</div>
+          <div class="stat-value" id="taskCount">0</div>
+          <div class="stat-note">Reward tasks</div>
+        </div>
+      </div>
+      <div class="section-head"><h2>Quick Access</h2></div>
+      <div class="stats-grid">
+        <div class="stat-card" onclick="showPage('tasks')" style="cursor:pointer">
+          <div class="stat-icon">🎁</div><div class="stat-label">Earn rewards</div>
+          <div class="stat-value" style="font-size:15px">Explore Tasks ↗</div>
+        </div>
+        <div class="stat-card" onclick="showPage('friends')" style="cursor:pointer">
+          <div class="stat-icon">👥</div><div class="stat-label">Grow your squad</div>
+          <div class="stat-value" style="font-size:15px">Invite Friends ↗</div>
+        </div>
+      </div>
+      <p class="notice">Demo interface: points shown here are not real cryptocurrency and have no cash value.</p>
+    </section>
+
+    <section class="page" id="tasks">
+      <div class="eyebrow">REWARDS CENTER</div>
+      <h1>Complete Tasks.</h1>
+      <div class="subtitle">Your task progress and rewards in one place.</div>
+
+      <div class="balance-card">
+        <div class="balance-label">TASK REWARDS EARNED</div>
+        <div class="balance-number" id="taskEarned">0 <span style="font-size:16px">RDX</span></div>
+        <div class="coin-tag">Complete a demo task below</div>
+      </div>
+
+      <div class="section-head"><h2>Available Tasks</h2><span class="badge">3 TASKS</span></div>
+      <div id="taskList"></div>
+
+      <div class="section-head"><h2>Recent Task History</h2></div>
+      <div class="info-card" id="taskHistory"><div class="empty">No rewards collected yet.</div></div>
+      <p class="notice">These are demo tasks. Real Telegram task verification will be added with the backend.</p>
+    </section>
+
+    <section class="page" id="miners">
+      <div class="eyebrow">MINER WORKSHOP</div>
+      <h1>Upgrade your Miner.</h1>
+      <div class="subtitle">View your mining level and future upgrade options.</div>
+
+      <div class="balance-card">
+        <div class="balance-label">CURRENT MINER LEVEL</div>
+        <div class="balance-number">Level 1</div>
+        <div class="coin-tag">◆ Rookie Miner</div>
+        <div class="balance-bottom"><span class="level-pill">⚡ Base Speed</span><span class="mini-stat">1 RDX/min · Demo</span></div>
+      </div>
+
+      <div class="section-head"><h2>Miner Stats</h2></div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon">⚡</div><div class="stat-label">Mining Speed</div><div class="stat-value">1 RDX/min</div></div>
+        <div class="stat-card"><div class="stat-icon">🏆</div><div class="stat-label">Current Level</div><div class="stat-value">01 / 10</div></div>
+      </div>
+
+      <div class="section-head"><h2>Next Upgrade</h2></div>
+      <div class="info-card">
+        <div class="row-between">
+          <div class="row"><div class="item-icon">🚀</div><div><div class="item-title">Level 2 · Advanced Miner</div><div class="item-desc">Higher speed and new perks planned.</div></div></div>
+          <span class="badge">SOON</span>
+        </div>
+        <button class="secondary" disabled style="width:100%;margin-top:16px;opacity:.5">Upgrade unavailable</button>
+      </div>
+      <p class="notice">Miner upgrades are visual placeholders. No points are spent on this screen.</p>
+    </section>
+
+    <section class="page" id="friends">
+      <div class="eyebrow">SQUAD NETWORK</div>
+      <h1>Bring your squad.</h1>
+      <div class="subtitle">Invite friends and grow the Rednex community.</div>
+
+      <div class="balance-card">
+        <div class="balance-label">YOUR REFERRAL BONUS</div>
+        <div class="balance-number">+100 <span style="font-size:16px">RDX</span></div>
+        <div class="coin-tag">Example reward · not yet active</div>
+      </div>
+
+      <div class="section-head"><h2>Your Invite Link</h2></div>
+      <div class="info-card">
+        <div class="item-title">Your personal referral link</div>
+        <div class="item-desc">Your real Telegram referral link will appear after bot integration.</div>
+        <div class="friend-link" id="refLink">Telegram bot link not configured yet</div>
+        <button class="primary" onclick="copyReferral()">▣ Copy Invite Link</button>
+      </div>
+
+      <div class="section-head"><h2>Your Squad</h2></div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-label">Total Invites</div><div class="stat-value">0</div></div>
+        <div class="stat-card"><div class="stat-icon">🎁</div><div class="stat-label">Referral Rewards</div><div class="stat-value">0 RDX</div></div>
+      </div>
+      <p class="notice">Referral counts and bonuses will only be credited after server-side verification.</p>
+    </section>
+
+    <section class="page" id="wallet">
+      <div class="eyebrow">YOUR ACCOUNT</div>
+      <h1>Points Wallet.</h1>
+      <div class="subtitle">Your demo points and recent activity.</div>
+
+      <div class="balance-card">
+        <div class="balance-label">AVAILABLE RDX POINTS</div>
+        <div class="balance-number" id="walletBalance">0.00</div>
+        <div class="coin-tag">◆ Demo balance · Not withdrawable</div>
+      </div>
+
+      <div class="section-head"><h2>Wallet Actions</h2></div>
+      <div class="info-card">
+        <div class="row"><div class="item-icon">↗</div><div><div class="item-title">Withdraw</div><div class="item-desc">Withdrawals will be considered after backend and token setup.</div></div></div>
+        <button class="secondary" disabled style="width:100%;margin-top:15px;opacity:.5">Coming later</button>
+      </div>
+
+      <div class="section-head"><h2>Recent Activity</h2></div>
+      <div class="info-card" id="walletHistory"><div class="empty">Your activity will appear here.</div></div>
+
+      <div class="section-head"><h2>Rednex Account</h2></div>
+      <div class="info-card">
+        <div class="row"><div class="item-icon">♙</div><div><div class="item-title">Telegram Account</div><div class="item-desc">Telegram user authentication is not connected yet.</div></div></div>
+      </div>
+      <p class="notice">This prototype does not connect to a real wallet or process payments.</p>
+    </section>
+  </main>
+</div>
+
+<nav class="bottom-nav">
+  <button class="nav-btn active" data-page="home" onclick="showPage('home')"><span class="nav-icon">⌂</span>Home</button>
+  <button class="nav-btn" data-page="tasks" onclick="showPage('tasks')"><span class="nav-icon">▤</span>Tasks</button>
+  <button class="nav-btn" data-page="miners" onclick="showPage('miners')"><span class="nav-icon">⚒</span>Miners</button>
+  <button class="nav-btn" data-page="friends" onclick="showPage('friends')"><span class="nav-icon">♧</span>Friends</button>
+  <button class="nav-btn" data-page="wallet" onclick="showPage('wallet')"><span class="nav-icon">◉</span>Wallet</button>
+</nav>
+
+<script>
+const $ = id => document.getElementById(id);
+let balance = 0;
+let mining = false;
+let elapsed = 0;
+let miningTimer = null;
+let sessionStart = 0;
+let completed = [];
+let history = [];
+let taskEarned = 0;
+
+const tasks = [
+  {id:1,icon:"✈️",title:"Join the Telegram Community",desc:"Join the official Rednex Telegram channel.",reward:50},
+  {id:2,icon:"📢",title:"Follow Project Updates",desc:"Stay updated with Rednex announcements.",reward:30},
+  {id:3,icon:"🎮",title:"Explore Rednex",desc:"Explore the app and its main sections.",reward:20}
+];
+
+function showPage(page){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
+  $(page).classList.add("active");
+  window.scrollTo(0,0);
+}
+function updateBalances(){
+  $("balance").textContent=balance.toFixed(2);
+  $("walletBalance").textContent=balance.toFixed(2);
+  $("taskEarned").innerHTML=taskEarned+' <span style="font-size:16px">RDX</span>';
+  $("taskCount").textContent=completed.length;
+}
+function toggleMining(){
+  if(!mining){
+    mining=true;
+    sessionStart=Date.now();
+    $("mineBtn").textContent="⏸ Stop Session";
+    $("mineBtn").style.background="linear-gradient(110deg,#6d2631,#451a24)";
+    miningTimer=setInterval(()=>{
+      elapsed=Math.floor((Date.now()-sessionStart)/1000);
+      const minutes=elapsed/60;
+      $("sessionTime").textContent=String(Math.floor(elapsed/60)).padStart(2,"0")+":"+String(elapsed%60).padStart(2,"0");
+      $("progressFill").style.width=(elapsed%60/60*100)+"%";
+      $("progressText").textContent=Math.floor(elapsed%60/60*100)+"%";
+      balance+=1/60;
+      updateBalances();
+    },1000);
+  }else{
+    mining=false;
+    clearInterval(miningTimer);
+    $("mineBtn").textContent="⚡ Resume Mining";
+    $("mineBtn").style.background="";
+    addHistory("Mining demo session",0);
+  }
+}
+function renderTasks(){
+  $("taskList").innerHTML=tasks.map(t=>{
+    const done=completed.includes(t.id);
+    return `<div class="info-card">
+      <div class="row-between">
+        <div class="row"><div class="item-icon">${t.icon}</div><div><div class="item-title">${t.title}</div><div class="item-desc">${t.desc}</div></div></div>
+        <span class="item-reward">+${t.reward}</span>
+      </div>
+      <div class="task-button"><button class="${done?'secondary':'primary'}" style="width:100%" ${done?'disabled':''} onclick="claimTask(${t.id})">${done?'✓ Completed':'Claim Demo Reward'}</button></div>
+    </div>`;
+  }).join("");
+}
+function claimTask(id){
+  if(completed.includes(id))return;
+  const t=tasks.find(x=>x.id===id);
+  if(!t)return;
+  completed.push(id);
+  balance+=t.reward;
+  taskEarned+=t.reward;
+  addHistory(t.title,t.reward);
+  renderTasks();
+  updateBalances();
+}
+function addHistory(title,amount){
+  history.unshift({title,amount,time:new Date().toLocaleString()});
+  history=history.slice(0,20);
+  const html=history.map(h=>`<div class="history-item row-between"><div><div class="item-title">${h.title}</div><div class="item-desc">${h.time}</div></div><div class="${h.amount>0?'history-plus':''}">${h.amount>0?'+'+h.amount+' RDX':'Session'}</div></div>`).join("");
+  $("taskHistory").innerHTML=html;
+  $("walletHistory").innerHTML=html;
+}
+function copyReferral(){
+  const text=$("refLink").textContent;
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).then(()=>alert("Demo link copied. Real invite link is not configured yet.")).catch(()=>alert("Real invite link is not configured yet."));
+  }else{
+    alert("Real invite link is not configured yet.");
+  }
+}
+renderTasks();
+updateBalances();
+</script>
+</body>
+</html>
